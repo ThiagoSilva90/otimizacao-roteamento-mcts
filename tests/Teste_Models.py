@@ -31,7 +31,6 @@ def test_order_holds_volume_and_coordinate():
     assert order.volume == 3.0
     assert order.delivery_coordinate.name == "Cliente A"
 
-
 # ---------- Vehicle ----------
 
 @pytest.fixture
@@ -44,7 +43,6 @@ def default_vehicle():
         consumption=8.0,
     )
 
-
 def test_holds_load_within_capacity(default_vehicle):
     assert default_vehicle.holds_load(9.9) is True
 
@@ -53,10 +51,8 @@ def test_holds_load_at_exact_capacity(default_vehicle):
     # Limite exato deve ser aceito (>=)
     assert default_vehicle.holds_load(10.0) is True
 
-
 def test_holds_load_above_capacity(default_vehicle):
     assert default_vehicle.holds_load(10.1) is False
-
 
 def test_estimate_combustible_cost(default_vehicle):
     # 80 km / 8 km-por-litro = 10 litros; 10 litros * R$6,00 = R$60,00
@@ -65,13 +61,11 @@ def test_estimate_combustible_cost(default_vehicle):
     )
     assert cost == pytest.approx(60.0)
 
-
 def test_estimate_combustible_cost_zero_distance(default_vehicle):
     cost = default_vehicle.estimate_combustible_cost(
         total_distance=0, combustible_cost=6.0
     )
     assert cost == pytest.approx(0.0)
-
 
 def test_estimate_combustible_cost_with_zero_consumption_raises():
     broken_vehicle = Vehicle(
