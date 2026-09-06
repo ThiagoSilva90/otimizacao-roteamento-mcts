@@ -1,3 +1,9 @@
+"""
+It represents a delivery point within the simulated environment.
+Each point has a location (x, y coordinates) and can be associated
+to one or more orders that are to be delivered to that location.
+"""
+
 from dataclasses import dataclass
 import math
 
@@ -17,4 +23,4 @@ class CoordinatedDelivery:
         return math.hypot(self.x - other.x, self.y - other.y)
 
     def __repr__(self):
-        return f'CoordinatedDelivery({self.id}, {self.x}, {self.y})'
+        return f'Ponto de Entrega({self.id}, {self.x}, {self.y})'
