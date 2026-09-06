@@ -24,8 +24,8 @@ class Vehicle:
         """
         if self.consumption <= 0:
             raise ValueError("Consumption must be greater than zero.")
-        total_liters = total_distance / combustible_cost
-        return total_liters * self.consumption
+        total_liters = total_distance / self.consumption
+        return total_liters * combustible_cost
 
     def __repr__(self):
         return (

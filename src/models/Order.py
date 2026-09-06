@@ -4,7 +4,7 @@ An order is linked to a delivery point and has a volume
 """
 
 from dataclasses import dataclass
-from coordinated_delivery import CoordinatedDelivery
+from src.models.Coordinated_delivery import CoordinatedDelivery
 
 @dataclass
 class Order:
