@@ -6,6 +6,7 @@ class Vehicle:
     name: str
     volumetric_capacity: float
     consumption: float # per km
+    fixed_cost: float = 0.0
 
     def holds_load(self, total_load: float) -> bool:
         """
@@ -30,6 +31,6 @@ class Vehicle:
     def __repr__(self):
         return (
             f"Veiculo(id={self.id}, nome='{self.name}', "
-            f"Consumo={self.consumption} km/l,"
-            f"Capacidade={self.volumetric_capacity:}, "
+            f"Consumo={self.consumption} km/L, "
+            f"Capacidade={self.volumetric_capacity})"
         )
