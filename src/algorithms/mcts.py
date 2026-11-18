@@ -68,31 +68,31 @@ class MCTS:
                 node.children.append(child)
                 node = child
 
-                prefix = []
-                p = node
-                while p.parent is not None:
-                    prefix.append(p.action)
-                    p = p.parent
-                prefix.reverse()
+            prefix = []
+            p = node
+            while p.parent is not None:
+                prefix.append(p.action)
+                p = p.parent
+            prefix.reverse()
 
-                state, tail = node.state, []
-                while not state.is_terminal():
-                    a = state.rollout_action(self.rng, self.epsilon, self.stickiness)
-                    tail.append(a)
-                    state = state.apply(a)
-                cost = state.cost
-                if cost < best_cost:
-                    best_cost, best_actions = cost, prefix + tail
-                    history.append((it, best_cost))
+            state, tail = node.state, []
+            while not state.is_terminal():
+                a = state.rollout_action(self.rng, self.epsilon, self.stickiness)
+                tail.append(a)
+                state = state.apply(a)
+            cost = state.cost
+            if cost < best_cost:
+                best_cost, best_actions = cost, prefix + tail
+                history.append((it, best_cost))
 
-                reward = -cost
-                r_min, r_max = min(r_min, reward), max(r_max, reward)
-                while node is not None:
-                    node.visits += 1
-                    node.total += reward
-                    node = node.parent
+            reward = -cost
+            r_min, r_max = min(r_min, reward), max(r_max, reward)
+            while node is not None:
+                node.visits += 1
+                node.total += reward
+                node = node.parent
 
-            return SearchResult(best_actions, best_cost, it, time.perf_counter() - t0, history)
+        return SearchResult(best_actions, best_cost, it, time.perf_counter() - t0, history)
 
     def _uct_child(self, node: Node, r_min: float, r_max: float) -> Node:
         span = (r_max - r_min) or 1.0
@@ -104,4 +104,3 @@ class MCTS:
             if score > best_score:
                 best, best_score = ch, score
         return best
-

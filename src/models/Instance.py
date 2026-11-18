@@ -1,4 +1,3 @@
-
 from typing import List
 from src.models.Coordinated_delivery import CoordinatedDelivery
 from src.models.Order import Order
@@ -58,10 +57,10 @@ class RoutingInstance:
         self.km_cost = [fuel_price / v.consumption for v in self.fleet]  # R$ per km
         self.fixed_cost = [v.fixed_cost for v in self.fleet]
 
-        @property
-        def total_volume(self) -> float:
-            return sum(self.volumes)
+    @property
+    def total_volume(self) -> float:
+        return sum(self.volumes)
 
-        def __repr__(self):
-            return (f"RoutingInstance(n={self.n}, frota={self.m}, "
-                    f"volume_total={self.total_volume:.2f}, combustivel=R${self.fuel_price:.2f}/L)")
+    def __repr__(self):
+        return (f"RoutingInstance(n={self.n}, frota={self.m}, "
+                f"volume_total={self.total_volume:.2f}, combustivel=R${self.fuel_price:.2f}/L)")
