@@ -3,17 +3,8 @@ from src.models.Coordinated_delivery import CoordinatedDelivery
 from src.models.Order import Order
 from src.models.Vehicle import Vehicle
 
-class RoutingInstance:
-    """
-        :param depot: start/end point of every trip.
-        :param orders: orders to deliver (one node of the search per order).
-        :param fleet: available vehicle types (each may be used on many trips).
-        :param fuel_price: price of one liter of fuel (R$/L).
-        :param allow_early_return: if False, a vehicle may only go back to the
-            depot when it cannot carry any remaining order. Used by the TSP
-            relaxation (legacy pipeline) so it does not explore useless trips.
-    """
 
+class RoutingInstance:
     def __init__(
         self,
         depot: CoordinatedDelivery,
@@ -22,6 +13,15 @@ class RoutingInstance:
         fuel_price: float,
         allow_early_return: bool = True,
     ):
+        """
+        :param depot: start/end point of every trip.
+        :param orders: orders to deliver (one node of the search per order).
+        :param fleet: available vehicle types (each may be used on many trips).
+        :param fuel_price: price of one liter of fuel (R$/L).
+        :param allow_early_return: if False, a vehicle may only go back to the
+            depot when it cannot carry any remaining order. Used by the TSP
+            relaxation (legacy pipeline) so it does not explore useless trips.
+        """
         if not orders:
             raise ValueError("The instance needs at least one order.")
         if not fleet:
@@ -31,6 +31,8 @@ class RoutingInstance:
         for v in fleet:
             if v.consumption <= 0:
                 raise ValueError(f"Vehicle {v.name}: consumption must be greater than zero.")
+            if v.fuel_price is not None and v.fuel_price <= 0:
+                raise ValueError(f"Vehicle {v.name}: fuel price must be greater than zero.")
 
         max_capacity = max(v.volumetric_capacity for v in fleet)
         for o in orders:
@@ -48,13 +50,13 @@ class RoutingInstance:
         self.fuel_price = fuel_price
         self.allow_early_return = allow_early_return
 
-        self.n = len(self.orders)  # number of orders
-        self.m = len(self.fleet)  # number of vehicle types
+        self.n = len(self.orders)
+        self.m = len(self.fleet)
         points = [depot] + [o.delivery_coordinate for o in self.orders]
         self.dist = [[a.distance(b) for b in points] for a in points]
         self.volumes = [o.volume for o in self.orders]
         self.capacity = [v.volumetric_capacity for v in self.fleet]
-        self.km_cost = [fuel_price / v.consumption for v in self.fleet]  # R$ per km
+        self.km_cost = [v.price_or(fuel_price) / v.consumption for v in self.fleet]
         self.fixed_cost = [v.fixed_cost for v in self.fleet]
 
     @property

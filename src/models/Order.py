@@ -1,7 +1,3 @@
-"""
-Represents an order to be delivered.
-An order is linked to a delivery point and has a volume
-"""
 
 from dataclasses import dataclass
 from src.models.Coordinated_delivery import CoordinatedDelivery

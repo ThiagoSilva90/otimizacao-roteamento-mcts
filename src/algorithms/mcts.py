@@ -4,6 +4,7 @@ import time
 from dataclasses import dataclass, field
 from typing import List, Optional
 
+
 class Node:
     __slots__ = ("state", "parent", "action", "children", "untried", "visits", "total")
 
@@ -14,7 +15,8 @@ class Node:
         self.children: List["Node"] = []
         self.untried = state.legal_actions()
         self.visits = 0
-        self.total = 0.0
+        self.total = 0.0  # sum of rewards
+
 
 @dataclass
 class SearchResult:
@@ -24,17 +26,18 @@ class SearchResult:
     seconds: float
     history: List[tuple] = field(default_factory=list)
 
+
 class MCTS:
     def __init__(self, iterations: int = 5000, exploration: float = 0.7,
                  rollout_epsilon: float = 0.05, seed: Optional[int] = None,
                  time_limit: Optional[float] = None, stickiness: float = 0.9):
         """
-            :param iterations: max number of simulations.
-            :param exploration: UCT constant applied to rewards normalised to [0, 1].
-            :param rollout_epsilon: probability of a random move in the default policy.
-            :param seed: RNG seed (reproducible experiments).
-            :param time_limit: optional wall-clock budget in seconds.
-            :param stickiness: prob. that a simulation re-dispatches the vehicle of the previous trip.
+        :param iterations: max number of simulations.
+        :param exploration: UCT constant applied to rewards normalised to [0, 1].
+        :param rollout_epsilon: probability of a random move in the default policy.
+        :param seed: RNG seed (reproducible experiments).
+        :param time_limit: optional wall-clock budget in seconds.
+        :param stickiness: prob. that a simulation re-dispatches the vehicle of the previous trip.
         """
         self.iterations = iterations
         self.c = exploration
@@ -47,7 +50,7 @@ class MCTS:
         t0 = time.perf_counter()
         root = Node(root_state)
         best_cost, best_actions = math.inf, []
-        r_min, r_max = math.inf, -math.inf
+        r_min, r_max = math.inf, -math.inf  # reward bounds seen (reward = -cost)
         history = []
         it = 0
 
@@ -75,6 +78,7 @@ class MCTS:
                 p = p.parent
             prefix.reverse()
 
+            # 3) Simulation (default policy)
             state, tail = node.state, []
             while not state.is_terminal():
                 a = state.rollout_action(self.rng, self.epsilon, self.stickiness)

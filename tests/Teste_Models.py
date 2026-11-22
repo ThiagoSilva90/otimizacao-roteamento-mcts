@@ -1,8 +1,3 @@
-"""
-Testes automatizados para os modelos CoordinatedDelivery, Order e Vehicle.
-
-Rode com: pytest tests/
-"""
 
 import pytest
 from src.models.Coordinated_delivery import CoordinatedDelivery

@@ -5,27 +5,23 @@ from src.models.Order import Order
 from src.models.Vehicle import Vehicle
 from src.models.Instance import RoutingInstance
 
+GASOLINE_PRICE = 6.67
+DIESEL_S10_PRICE = 7.39
+
+
 def default_fleet() -> List[Vehicle]:
-    """
-    PLACEHOLDER fleet (capacity in m^3, consumption in km/L).
-    Replace by the real vehicles of Table I of the article.
-    """
     return [
-        Vehicle(id=1, name="Utilitario", volumetric_capacity=3.0, consumption=12.0),
-        Vehicle(id=2, name="Van", volumetric_capacity=8.0, consumption=9.0),
-        Vehicle(id=3, name="Caminhao VUC", volumetric_capacity=20.0, consumption=5.5),
+        Vehicle(id=1, name="Fiat Fiorino", volumetric_capacity=3.3, consumption=11.7,
+                fuel_price=GASOLINE_PRICE),
+        Vehicle(id=2, name="Fiat Ducato Cargo", volumetric_capacity=11.5, consumption=10.0,
+                fuel_price=DIESEL_S10_PRICE),
+        Vehicle(id=3, name="VUC (Delivery Express)", volumetric_capacity=20.0, consumption=6.0,
+                fuel_price=DIESEL_S10_PRICE),
     ]
 
 def generate_instance(n_orders: int, load_factor: float = 0.8, seed: Optional[int] = None,
                       fleet: Optional[List[Vehicle]] = None, fuel_price: float = 6.0,
                       area: float = 100.0) -> RoutingInstance:
-    """
-    :param n_orders: number of orders (one delivery point each), uniformly scattered
-        in an area x area square (km); the depot sits at the centre.
-    :param load_factor: total volume / capacity of the LARGEST vehicle.
-        <= 1.0 -> everything fits in one vehicle (legacy pipeline is applicable);
-        >  1.0 -> several trips are unavoidable (legacy pipeline is infeasible).
-    """
     rng = random.Random(seed)
     fleet = fleet or default_fleet()
     depot = CoordinatedDelivery(0, "Deposito", area / 2, area / 2)

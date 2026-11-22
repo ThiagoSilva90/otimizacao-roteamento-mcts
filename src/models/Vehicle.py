@@ -1,12 +1,18 @@
 from dataclasses import dataclass
+from typing import Optional
 
 @dataclass
 class Vehicle:
     id: int
     name: str
     volumetric_capacity: float
-    consumption: float # per km
+    consumption: float
     fixed_cost: float = 0.0
+    fuel_price: Optional[float] = None
+
+    def price_or(self, default_price: float) -> float:
+        """Price (R$/L) paid by this vehicle: its own fuel price if set, otherwise the default one."""
+        return self.fuel_price if self.fuel_price is not None else default_price
 
     def holds_load(self, total_load: float) -> bool:
         """
@@ -18,7 +24,7 @@ class Vehicle:
 
     def estimate_combustible_cost(self, total_distance: float, combustible_cost: float) -> float:
         """
-        Estimates the fuel cost (in R$) to travel the given distance."
+        Estimates the fuel cost (in R$) to travel the given distance.
         :param combustible_cost: Median cost of the combustible.
         :param total_distance: Total distance of the operation
         :return: Total coast
@@ -32,5 +38,6 @@ class Vehicle:
         return (
             f"Veiculo(id={self.id}, nome='{self.name}', "
             f"Consumo={self.consumption} km/L, "
-            f"Capacidade={self.volumetric_capacity})"
+            f"Capacidade={self.volumetric_capacity}"
+            + (f", Combustivel=R${self.fuel_price:.2f}/L" if self.fuel_price is not None else "") + ")"
         )

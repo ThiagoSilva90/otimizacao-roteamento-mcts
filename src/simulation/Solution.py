@@ -22,7 +22,7 @@ class Trip:
         return self.route(depot).total_distance()
 
     def cost(self, depot, fuel_price: float) -> float:
-        return (self.vehicle.estimate_combustible_cost(self.distance(depot), fuel_price)
+        return (self.vehicle.estimate_combustible_cost(self.distance(depot), self.vehicle.price_or(fuel_price))
                 + self.vehicle.fixed_cost)
 
 @dataclass

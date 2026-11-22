@@ -64,13 +64,13 @@ def solve_legacy_pipeline(inst: RoutingInstance, iterations: int = 5000, seed: O
     sequence = tsp_solution.trips[0].orders
     distance = result.cost
 
-    best_vehicle = min(candidates, key=lambda v: v.estimate_combustible_cost(distance, inst.fuel_price) + v.fixed_cost)
+    best_vehicle = min(candidates,
+                       key=lambda v: v.estimate_combustible_cost(distance, v.price_or(inst.fuel_price)) + v.fixed_cost)
     solution = Solution([Trip(vehicle=best_vehicle, orders=list(sequence))])
     cost = solution.total_cost(inst.depot, inst.fuel_price)
     return solution, cost, distance
 
 def solve_exact(inst: RoutingInstance, upper_bound: float = math.inf) -> Tuple[Solution, float]:
-    """Exhaustive DFS with bound pruning. Only practical for n <= ~7 and a short fleet."""
     best = [upper_bound, None]
 
     def dfs(state: VRPState, actions: list):

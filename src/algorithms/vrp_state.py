@@ -17,7 +17,7 @@ class VRPState:
         self.vehicle = vehicle
         self.cap_left = cap_left
         self.cost = cost
-        self.last_vehicle = last_vehicle # vehicle of the previous trip
+        self.last_vehicle = last_vehicle
 
     @classmethod
     def initial(cls, inst: RoutingInstance) -> "VRPState":
@@ -31,7 +31,6 @@ class VRPState:
         return self.remaining == 0 and self.loc == 0 and self.vehicle is None
 
     def feasible_orders(self) -> List[int]:
-        """Orders still to deliver that fit in the vehicle on the road."""
         rem, vol, cap = self.remaining, self.inst.volumes, self.cap_left + EPS
         return [i for i in range(self.inst.n) if (rem >> i) & 1 and vol[i] <= cap]
 
@@ -46,7 +45,6 @@ class VRPState:
             return [inst.n + v for v in range(inst.m) if inst.capacity[v] + EPS >= min_vol]
 
         acts = self.feasible_orders()
-        # A vehicle that just left the depot must deliver at least once (loc != 0).
         if self.loc != 0 and (inst.allow_early_return or not acts):
             acts.append(self.return_action)
         return acts
@@ -68,11 +66,6 @@ class VRPState:
         return VRPState(inst, 0, self.remaining, None, 0.0, self.cost + step, self.vehicle)
 
     def rollout_action(self, rng: random.Random, epsilon: float = 0.05, stickiness: float = 0.9) -> int:
-        """
-        Default-policy move used in simulations: nearest feasible order
-        (greedy), with probability `epsilon` a uniformly random legal action.
-        Vehicle dispatch is random, or repeats the previous trip's vehicle (stickiness).
-        """
         acts = self.legal_actions()
         if len(acts) == 1:
             return acts[0]
@@ -91,7 +84,6 @@ class VRPState:
         return min(feasible, key=lambda i: row[i + 1])
 
 def replay(inst: RoutingInstance, actions: List[int]) -> Tuple[VRPState, Solution]:
-    """Re-executes an action sequence from the root; returns final state and Solution."""
     state = VRPState.initial(inst)
     trips: List[Trip] = []
     current: Optional[Trip] = None
