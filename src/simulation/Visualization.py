@@ -60,3 +60,25 @@ def plot_solution(solution, depot, title: str = "Solução", fuel_price: float =
         plt.close(fig)
     else:
         plt.show()
+
+def plot_convergence(iterations, series, title: str = "Convergência do MCTS",
+                     ylabel: str = "Custo / custo do vizinho mais próximo", save_path: str = None):
+    fig, ax = plt.subplots(figsize=(8, 5.5))
+    cmap = plt.get_cmap("tab10")
+    for k, (label, med, low, high) in enumerate(series):
+        color = cmap(k % 10)
+        ax.plot(iterations, med, color=color, linewidth=2, label=label)
+        ax.fill_between(iterations, low, high, color=color, alpha=0.18)
+    ax.axhline(1.0, color="black", linestyle="--", linewidth=1, label="Vizinho mais próximo (= 1,0)")
+    ax.set_xscale("log")
+    ax.set_xlabel("Iterações do MCTS (escala log)")
+    ax.set_ylabel(ylabel)
+    ax.set_title(title)
+    ax.grid(True, linestyle="--", alpha=0.5, which="both")
+    ax.legend(fontsize=8, loc="best")
+
+    if save_path:
+        fig.savefig(save_path, dpi=150, bbox_inches="tight")
+        plt.close(fig)
+    else:
+        plt.show()
